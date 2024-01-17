@@ -2,8 +2,8 @@
 
 ## Versioning
 
-Kubernetes - k3s v1.27.9+k3s1
-Rancher - V2.8
+- Kubernetes - k3s v1.27.9+k3s1
+- Rancher - V2.8
 
 
 ## Structure
@@ -23,10 +23,55 @@ This is installed on Bare Metal, just download the .iso [here](https://www.proxm
 ## Linux Containers
 
 These can be set up in proxmox. Choose your linux flavor.
+1. Uncheck Privlaged container
+2. no not strat on create
+3. ssh into proxmox
+4. add the following to `/etc/pve/lxc/<conatinerId>.conf`
+    ```
+    lxc.apparmor.profile: unconfined
+    lxc.cgroup.devices.allow: a
+    lxc.cap.drop:
+    lxc.mount.auto: "proc:rw sys:rw"
+    ```
+5. start the coantiners
+6. run `pct push <container id> /boot/config-$(uname -r) /boot/config-$(uname -r)` for each conatinerId
+
+### In Conatiner Config
+This will need to be done in each container
+
+you can get a shell in the conatiner with `lxc-attach <conatinerId>`
+
+1. create this file `nano /usr/local/bin/conf-kmsg.sh`
+2. Add the following
+```
+#!/bin/sh -e
+if [ ! -e /dev/kmsg ]; then
+        ln -s /dev/console /dev/kmsg
+fi
+mount --make-rshared /
+```
+3. Create this file `nano /etc/systemd/system/conf-kmsg.service`
+4. add the following
+```
+[Unit]
+Description=Make sure /dev/kmsg exists
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/conf-kmsg.sh
+TimeoutStartSec=0
+[Install]
+WantedBy=default.target
+```
+5. run the following commands to start the service
+```
+chmod +x /usr/local/bin/conf-kmsg.sh
+systemctl daemon-reload
+systemctl enable --now conf-kmsg
+```
 
 Install the following packages:
 - curl
-
 
 ## K3S Kubernetes Cluster
 
@@ -38,7 +83,7 @@ Install k3s
 
 `curl -fsL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.9+k3s1 sh -s - --disable traefik --node-name control.k8s`
 
-Get kube config and save it locally under .kube/config (for linux)
+Get kube config and save it locally under .kube/config (for linux) make sure to change the server to the ip address you gave your control.k8s
 
 `cat /etc/rancher/k3s/k3s.yaml`
 
@@ -46,11 +91,17 @@ Get the Control Token (you will need this in the next step to setup the worker n
 
 `cat /var/lib/rancher/k3s/server/node-token`
 
-### Worker Nodes
+save the config as a template
+1. shut down the machaine.
+2. right click on it an click clone
+3. right click and click template
+4. save the token and kube config in the notes
 
+### Worker Nodes
+Before you run the following command, shutdown the machine, clone, create a template and add the command below to the notes with the right tocket so that you can spin up more worker nodes easliy.
 Install k3s
 
-`curl -fsL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.9+k3s1 K3S_URL=https://<Ip_Of_Control_Node>:6443 K3S_TOKEN=<Token_From_Control_Node> sh -s - --node-name worker-1.k8`
+`curl -fsL https://get.k3s.io | INSTALL_K3S_VERSION=v1.27.9+k3s1 K3S_URL=https://<Ip_Of_Control_Node>:6443 K3S_TOKEN=<Token_From_Control_Node> sh -s - --node-name worker-1.k8s`
 
 Do this for any additional nodes you need, just make sure to change the name of the nodes at the end of the command.
 
@@ -60,7 +111,9 @@ Do this for any additional nodes you need, just make sure to change the name of 
 
 `helm repo update`
 
-`helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true`
+`kubectl create namespace ingress`
+
+`helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress --set controller.publishService.enabled=true`
 
 ## Cloudflare Certs
 
