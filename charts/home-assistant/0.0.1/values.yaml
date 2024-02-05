@@ -9,16 +9,6 @@ service:
   type: ClusterIP
   port: 80
 
-nfs:
-  server: 192.168.0.40
-  path: /data
-  storageSize: 10Gi
-
-volumes:
-  - name: nfs-volume
-    persistentVolumeClaim:
-      claimName: nfs-pvc
-
 ingress:
   enabled: True
   annotations:
