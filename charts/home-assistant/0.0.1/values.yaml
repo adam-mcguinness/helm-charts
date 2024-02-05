@@ -16,8 +16,8 @@ nfs:
 
 volumes:
   - name: nfs-volume
-      persistentVolumeClaim:
-        claimName: nfs-pvc
+    persistentVolumeClaim:
+      claimName: nfs-pvc
 
 ingress:
   enabled: True
