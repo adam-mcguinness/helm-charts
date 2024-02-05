@@ -14,8 +14,13 @@ nfs:
   path: /data
   storageSize: 10Gi
 
+volumes:
+  - name: nfs-volume
+      persistentVolumeClaim:
+        claimName: nfs-pvc
+
 ingress:
-  enabled: true
+  enabled: True
   annotations: {}
      kubernetes.io/ingress.class: nginx
   hosts:

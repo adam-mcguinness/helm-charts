@@ -16,7 +16,7 @@ service:
       protocol: TCP
 
 ingress:
-  enabled: true
+  enabled: True
   className: "nginx"
   annotations:
      kubernetes.io/ingress.class: nginx
