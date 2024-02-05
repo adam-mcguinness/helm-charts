@@ -21,7 +21,7 @@ ingress:
   annotations:
      kubernetes.io/ingress.class: nginx
   hosts:
-    - host: factorio
+    - host: factorio.grubbr.io
       paths:
         - path: /
           pathType: ImplementationSpecific
