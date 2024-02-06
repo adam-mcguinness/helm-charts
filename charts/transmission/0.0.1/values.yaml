@@ -9,6 +9,15 @@ container:
   name: transmission
   image: lscr.io/linuxserver/transmission:latest
   ports: [9091, 51413]
+  env:
+    - name: TRANSMISSION_HOME
+      value: "/config"
+    - name: TZ
+      value: "America/Denver"
+    - name: PUID
+      value: "911"
+    - name: PGID
+      value: "911"
 
 service:
   name: transmission-service
@@ -31,3 +40,4 @@ ingress:
   className: nginx
   host: grubbr.io
   path: /transmission(/|$)(
+
