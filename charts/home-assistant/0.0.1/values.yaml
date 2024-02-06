@@ -7,7 +7,8 @@ deployment:
 container:
   name: home-assistant
   image: ghcr.io/home-assistant/home-assistant
-  tag: IfNotPresent
+  tag: stable
+  imagePullPolicy: IfNotPresent
   port: 8123
   volumeMounts:
     - mountPath: /config
