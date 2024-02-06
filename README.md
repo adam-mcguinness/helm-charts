@@ -160,3 +160,27 @@ metedata:
         kubernetes.io/ingress.class: nginx
         #additional annotations
 ```
+
+# Storage
+## NFS Server
+
+## Add PV to the Cluster
+This is what will hold all of you media and config for the pods.
+
+Add something like this to your k8s cluster:
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: nfs-pv
+spec:
+   capacity:
+      storage: 100Gi
+   accessModes:
+      - ReadWriteMany
+   nfs:
+      path: /data
+      server: nfs-server-ip
+```
+
+you will need to fill in the appropriate nfs server ip and path for your environment

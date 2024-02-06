@@ -1,9 +1,12 @@
 replicaCount: 1
 
 image:
-  repository: docker pull homeassistant/home-assistant
-  pullPolicy: Always
-  tag: "latest"
+  repository: ghcr.io/home-assistant/home-assistant
+  pullPolicy: IfNotPresent
+  tag: "stable"
+  env:
+    - name: TZ
+      value: "America/Denver"
 
 service:
   type: ClusterIP

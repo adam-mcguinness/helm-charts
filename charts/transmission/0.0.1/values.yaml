@@ -10,6 +10,11 @@ container:
   image: lscr.io/linuxserver/transmission
   tag: latest
   ports: [9091, 51413]
+  volumeMounts:
+    - mountPath: /config
+      subPath: config/transmission
+    - mountPath: /downloads
+      subPath: downloads
   env:
     TRANSMISSION_HOME: /config
     TZ: America/Denver
@@ -31,6 +36,10 @@ service:
       port: 51413
       targetPort: 51413
       protocol: UDP
+
+volume:
+  name: data
+  storage: 100Gi
 
 ingress:
   enabled: true
