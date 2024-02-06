@@ -128,7 +128,7 @@ In order to sign you website there is a few setup things you need to do with Clo
 7. Copy the Private key to tls.key file.
 8. Download the Cloudflare Root CA Cert to the same directory as the above 2 files. `wget https://developers.cloudflare.com/ssl/static/origin_ca_rsa_root.pem`
 9. Concatenate the tls.pem and origin_ca_rsa_root.pem `cat tls.pem origin_ca_rsa_root.pem > combined.crt`
-10. Create the secret in the appropriate namespace `kubectl create secret tls my-tls-secret --cert=combined.pem --key=tls.key -n <namespace>` You will need a secret in each namespace for the ingress to pick up.
+10. Create the secret in the appropriate namespace `kubectl create secret tls my-tls-secret --cert=combined.crt --key=tls.key -n <namespace>` You will need a secret in each namespace for the ingress to pick up.
 
 ## Rancher
 
