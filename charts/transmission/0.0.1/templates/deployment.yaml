@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.container.name }}
-          image: {{ .Values.container.image }}
+          image: {{ .Values.container.image}}:{{ .Values.container.tag }}
           ports:
             - containerPort: {{index .Values.container.ports 0 }}
             - containerPort: {{index .Values.container.ports 1 }}
@@ -29,5 +29,5 @@ spec:
           env:
             {{- range $key, $value := .Values.container.env }}
             - name: {{ $key }}
-              value: {{ $value }}
+              value: {{ $value | quote }}
             {{- end }}

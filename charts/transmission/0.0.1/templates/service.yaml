@@ -6,15 +6,9 @@ spec:
   selector:
     app: {{ .Values.app.name }}
   ports:
-    - name: http
-      protocol: TCP
-      port: {{ .Values.service.ports.http.port }}
-      targetPort: {{ .Values.service.ports.http.targetPort }}
-    - name: tcp
-      protocol: TCP
-      port: {{ .Values.service.ports.tcp.port }}
-      targetPort: {{ .Values.service.ports.tcp.targetPort }}
-    - name: udp
-      protocol: UDP
-      port: {{ .Values.service.ports.udp.port }}
-      targetPort: {{ .Values.service.ports.udp.targetPort }}
+    {{- range $key, $value := .Values.service.ports }}
+    - name: {{ $key }}
+      protocol: {{ $value.protocol }}
+      port: {{ $value.port }}
+      targetPort: {{ $value.targetPort }}
+    {{- end }}

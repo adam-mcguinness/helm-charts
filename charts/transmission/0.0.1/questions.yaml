@@ -1,19 +1,40 @@
 questions:
   - variable: app.name
-    description: "The name of the application"
     label: "Application Name"
+    description: "The name of the application"
     type: "string"
     default: "transmission"
     group: "Application Settings"
 
-  - variable: deployment.replicas
-    description: "The number of replicas to deploy"
-    label: "Replica Count"
-    type: "int"
-    default: 1
-    group: "Deployment Settings"
+  - variable: container.env.TRANSMISSION_HOME
+    label: "Transmission Home"
+    description: "Set home directory for Transmission"
+    type: "string"
+    default: "/config"
+    group: "Environment Settings"
 
-  - variable: container.image
+  - variable: container.env.TZ
+    label: "Timezone"
+    description: "Set your time zone"
+    type: "string"
+    default: "America/Denver"
+    group: "Environment Settings"
+
+  - variable: container.env.PUID
+    label: "UID"
+    description: "Set the UID for the container user"
+    type: "string"
+    default: "1000"
+    group: "Environment Settings"
+
+  - variable: container.env.PGID
+    label: "GID"
+    description: "Set the GID for the container user"
+    type: "string"
+    default: "1000"
+    group: "Environment Settings"
+
+  - variable: container.image.
     description: "The Docker image for the Transmission application"
     label: "Container Image"
     type: "string"
@@ -24,11 +45,11 @@ questions:
     description: "The external HTTP port for accessing Transmission"
     label: "HTTP Port"
     type: "int"
-    default: 443
+    default: "443"
     group: "Service Ports"
 
   - variable: ingress.host
-    description: "The hostname for accessing Transmission via Ingress"
+    description: "Your domain name for Transmission access via Ingress"
     label: "Ingress Host"
     type: "string"
     default: "grubbr.io"

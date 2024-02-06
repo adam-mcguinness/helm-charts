@@ -22,3 +22,5 @@ version: 0.0.1
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "4.0.5-r0-ls220"
+
+icon: https://transmissionbt.com/assets/images/Transmission_icon.png
