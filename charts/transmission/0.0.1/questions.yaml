@@ -34,11 +34,11 @@ questions:
     default: "1000"
     group: "Environment Settings"
 
-  - variable: container.image.
-    description: "The Docker image for the Transmission application"
-    label: "Container Image"
+  - variable: container.image.tag
+    description: "The tag for the Docker image"
+    label: "Container Tag"
     type: "string"
-    default: "lscr.io/linuxserver/transmission:latest"
+    default: "latest"
     group: "Container Settings"
 
   - variable: service.ports.http.port
