@@ -17,7 +17,7 @@ spec:
           image: busybox
           command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/init' ]
           volumeMounts:
-            - name: nfs-volume
+            - name: {{ .Values.volumes.name }}
               mountPath: "/data"
       containers:
         - name: {{ .Values.container.name }}
