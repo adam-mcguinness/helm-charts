@@ -1,0 +1,33 @@
+app:
+  name: transmission
+
+deployment:
+  name: transmission
+  replicas: 1
+
+container:
+  name: transmission
+  image: lscr.io/linuxserver/transmission:latest
+  ports: [9091, 51413]
+
+service:
+  name: transmission-service
+  ports:
+    http:
+      port: 443
+      targetPort: 9091
+    tcp:
+      port: 51413
+      targetPort: 51413
+    udp:
+      port: 51413
+      targetPort: 51413
+
+ingress:
+  name: transmission-ingress
+  annotations:
+    rewriteTarget: /transmission/$2
+    useRegex: "true"
+  className: nginx
+  host: grubbr.io
+  path: /transmission(/|$)(

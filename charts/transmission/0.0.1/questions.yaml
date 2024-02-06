@@ -1,0 +1,42 @@
+questions:
+  - variable: app.name
+    description: "The name of the application"
+    label: "Application Name"
+    type: "string"
+    default: "transmission"
+    group: "Application Settings"
+
+  - variable: deployment.replicas
+    description: "The number of replicas to deploy"
+    label: "Replica Count"
+    type: "int"
+    default: 1
+    group: "Deployment Settings"
+
+  - variable: container.image
+    description: "The Docker image for the Transmission application"
+    label: "Container Image"
+    type: "string"
+    default: "lscr.io/linuxserver/transmission:latest"
+    group: "Container Settings"
+
+  - variable: service.ports.http.port
+    description: "The external HTTP port for accessing Transmission"
+    label: "HTTP Port"
+    type: "int"
+    default: 443
+    group: "Service Ports"
+
+  - variable: ingress.host
+    description: "The hostname for accessing Transmission via Ingress"
+    label: "Ingress Host"
+    type: "string"
+    default: "grubbr.io"
+    group: "Ingress Settings"
+
+  - variable: ingress.tlsSecret
+    description: "The name of the TLS secret for Ingress"
+    label: "TLS Secret Name"
+    type: "string"
+    default: "transmission-tls"
+    group: "Ingress Settings"

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.container.image }}
+          ports:
+            - containerPort: {{ .Values.container.ports[0] }}
+            - containerPort: {{ .Values.container.ports[1] }}
+              protocol: TCP
+            - containerPort: {{ .Values.container.ports[1] }}
+              protocol: UDP
+          volumeMounts:
+            - mountPath: /config
+              name: transmission-config
+            - mountPath: /downloads
+              name: transmission-downloads
+          env:
+            - name: TRANSMISSION_HOME
+              value: "/config"
+      volumes:
+        - name: transmission-config
+          persistentVolumeClaim:
+            claimName: {{ .Values.volumes.configPvc }}
+        - name: transmission-downloads
+          persistentVolumeClaim:
+            claimName: {{ .Values.volumes.downloadsPvc }}
