@@ -172,15 +172,16 @@ Add something like this to your k8s cluster:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-   name: nfs-pv
+   name: my-pv
 spec:
    capacity:
       storage: 100Gi
    accessModes:
-      - ReadWriteMany
+      - ReadWriteOnce
    nfs:
-      path: /data
-      server: nfs-server-ip
+      path: /path/to/nfs
+      server: nfs-server.example.com
+   persistentVolumeReclaimPolicy: Retain
 ```
 
 you will need to fill in the appropriate nfs server ip and path for your environment

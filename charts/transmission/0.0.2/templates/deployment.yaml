@@ -12,6 +12,13 @@ spec:
       labels:
         app: {{ .Values.app.name }}
     spec:
+      initContainers:
+        - name: init-nfs
+          image: busybox
+          command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/init' ]
+          volumeMounts:
+            - name: nfs-volume
+              mountPath: "/data"
       containers:
         - name: {{ .Values.container.name }}
           image: {{ .Values.container.image}}:{{ .Values.container.tag }}

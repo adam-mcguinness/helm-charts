@@ -12,6 +12,13 @@ spec:
       labels:
         app: {{ .Values.app.name }}
     spec:
+      initContainers:
+        - name: init-nfs
+          image: busybox
+          command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/init' ]
+          volumeMounts:
+            - name: nfs-volume
+              mountPath: "/data"
       containers:
         - name: {{ .Values.container.name }}
           image: {{ .Values.container.image}}:{{ .Values.container.tag }}
@@ -19,7 +26,7 @@ spec:
             - containerPort: {{index .Values.container.port}}
           volumeMounts:
             {{- range $key, $value := .Values.container.volumeMounts }}
-            - name: {{ $.Values.volume.name }}
+            - name: {{ $.Values.volumes.name }}
               mountPath: {{ $value.mountPath }}
               subPath: {{ $value.subPath }}
             {{- end }}
@@ -29,6 +36,7 @@ spec:
               value: {{ $value | quote }}
             {{- end }}
       volumes:
-        - name: {{ .Values.volume.name }}
-          persistentVolumeClaim:
-            claimName: {{ .Values.deployment.name }}-pvc
+        - name: {{ .Values.volumes.name }}
+          nfs:
+            server: {{ .Values.volumes.nfs.server }}
+            path: {{ .Values.volumes.nfs.path }}

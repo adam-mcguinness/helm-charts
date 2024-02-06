@@ -23,17 +23,20 @@ service:
       targetPort: 8123
       protocol: TCP
 
-volume:
+volumes:
   name: data
-  storage: 100Gi
+  nfs:
+    server: 192.168.0.40
+    path: /data
+
 
 ingress:
   enabled: true
   name: home-assistant-ingress
   annotations:
-    rewriteTarget: /homeassistant/$2
+    rewriteTarget: /home-assistant/$2
     useRegex: "true"
   className: nginx
   host: grubbr.io
-  path: /homeassistant(/|$)(
+  path: /home-assistant(/|$)
   tlsSecret: home-assistant-tls
