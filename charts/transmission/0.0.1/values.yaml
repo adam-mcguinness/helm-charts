@@ -50,4 +50,5 @@ ingress:
   className: nginx
   host: grubbr.io
   path: /transmission(/|$)(
+  tlsSecret: transmission-tls
 

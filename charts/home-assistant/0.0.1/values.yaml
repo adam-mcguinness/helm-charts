@@ -1,27 +1,39 @@
-replicaCount: 1
+app:
+  name: home-assistant
 
-image:
-  repository: ghcr.io/home-assistant/home-assistant
-  pullPolicy: IfNotPresent
-  tag: "stable"
+deployment:
+  name: home-assistant
+  replicas: 1
+container:
+  name: home-assistant
+  image: ghcr.io/home-assistant/home-assistant
+  tag: IfNotPresent
+  port: 8123
+  volumeMounts:
+    - mountPath: /config
+      subPath: config/home-assistant
   env:
-    - name: TZ
-      value: "America/Denver"
+    TZ: America/Denver
 
 service:
-  type: ClusterIP
-  port: 80
+  name: home-assistant-service
+  ports:
+    http:
+      port: 443
+      targetPort: 8123
+      protocol: TCP
+
+volume:
+  name: data
+  storage: 100Gi
 
 ingress:
-  enabled: True
+  enabled: true
+  name: home-assistant-ingress
   annotations:
-     kubernetes.io/ingress.class: nginx
-  hosts:
-    - host: homeassistant.grubbr.io
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    rewriteTarget: /homeassistant/$2
+    useRegex: "true"
+  className: nginx
+  host: grubbr.io
+  path: /homeassistant(/|$)(
+  tlsSecret: home-assistant-tls
