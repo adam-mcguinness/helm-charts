@@ -1,0 +1,70 @@
+app:
+  name: transmission
+
+deployment:
+  name: transmission
+  replicas: 1
+
+containers:
+  transmission:
+    name: transmission
+    image: lscr.io/linuxserver/transmission
+    tag: latest
+    ports: [9091, 51413]
+    volumeMounts:
+      - mountPath: /config
+        subPath: config/transmission
+      - mountPath: /downloads
+        subPath: media
+      - mountPath: /watch
+        subPath: watch
+    env:
+      TRANSMISSION_HOME: /config
+      TZ: America/Denver
+      PUID: 911
+      PGID: 911
+
+  wireguard:
+    name: wireguard
+    image: lscr.io/linuxserver/wireguard
+    tag: latest
+    ports: [ 51820 ]
+    env:
+      TRANSMISSION_HOME: /config
+      TZ: America/Denver
+      PUID: 1000
+      PGID: 1000
+      SERVERPORT: 51820
+      PEERS: 1
+      PEERDNS: auto
+    volumeMounts:
+      - mountPath: /config
+        subPath: config/transmission
+    securityContext:
+      capabilities:
+        add: [ "NET_ADMIN", "SYS_MODULE" ]
+
+service:
+  name: transmission-service
+  ports:
+    http:
+      port: 443
+      targetPort: 9091
+      protocol: TCP
+
+volumes:
+  name: data
+  nfs:
+    server: 192.168.0.40
+    path: /data
+
+ingress:
+  enabled: true
+  name: transmission-ingress
+  annotations:
+    rewriteTarget: /transmission/$2
+    useRegex: "true"
+  className: nginx
+  host: grubbr.io
+  path: /transmission(/|$)(.*)
+  tlsSecret: transmission-tls
