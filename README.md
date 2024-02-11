@@ -32,6 +32,8 @@ These can be set up in proxmox. Choose your linux flavor.
     lxc.cgroup.devices.allow: a
     lxc.cap.drop:
     lxc.mount.auto: "proc:rw sys:rw"
+    lxc.cgroup2.devices.allow: c 10:200 rwm
+    lxc.mount.entry: /dev/net dev/net none bind,create=dir
     ```
 5. start the coantiners
 6. run `pct push <container id> /boot/config-$(uname -r) /boot/config-$(uname -r)` for each conatinerId
