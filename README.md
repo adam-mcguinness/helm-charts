@@ -8,23 +8,23 @@
 
 ## Structure
 
-Proxmox Hpyervisor -> Linux LXC Containers -> K3S -> Nginx Ingress Controller -> Rancher
+Proxmox Hypervisor -> Linux LXC Containers -> K3S -> Nginx Ingress Controller -> Rancher
 
-## Prerequesits
+## Prerequisites
 - Linux Host or WSL
 - kubectl
 - helm
 - vim
 
-## Proxmox Hpyervisor
+## Proxmox Hypervisor
 
 This is installed on Bare Metal, just download the .iso [here](https://www.proxmox.com/en/proxmox-virtual-environment/get-started) and make a bootable usb stick with RUFUS. Download rufus [here](https://rufus.ie/en/)
 
 ## Linux Containers
 
 These can be set up in proxmox. Choose your linux flavor.
-1. Uncheck Privlaged container
-2. no not strat on create
+1. Uncheck Unprivileged container
+2. no not start on create
 3. ssh into proxmox
 4. add the following to `/etc/pve/lxc/<conatinerId>.conf`
     ```
@@ -38,10 +38,10 @@ These can be set up in proxmox. Choose your linux flavor.
 5. start the coantiners
 6. run `pct push <container id> /boot/config-$(uname -r) /boot/config-$(uname -r)` for each conatinerId
 
-### In Conatiner Config
+### In Container Config
 This will need to be done in each container
 
-you can get a shell in the conatiner with `lxc-attach <conatinerId>`
+you can get a shell in the container with `lxc-attach <conatinerId>`
 
 1. create this file `nano /usr/local/bin/conf-kmsg.sh`
 2. Add the following
@@ -94,8 +94,8 @@ Get the Control Token (you will need this in the next step to setup the worker n
 `cat /var/lib/rancher/k3s/server/node-token`
 
 save the config as a template
-1. shut down the machaine.
-2. right click on it an click clone
+1. shut down the machine.
+2. right click on it and click clone
 3. right click and click template
 4. save the token and kube config in the notes
 
@@ -121,10 +121,10 @@ Do this for any additional nodes you need, just make sure to change the name of 
 
 In order to sign you website there is a few setup things you need to do with Cloudflare and your K8s cluster.
 
-1. Have a domain Registered and useing DNS on Cloudlfare.
+1. Have a domain Registered and using DNS on Cloudlfare.
 2. Set an A record pointing to your home IP address, make sure to set is as proxied
 3. Go to SSL/TLS on the left pane,
-4. In SSL/TLS->Overview slect "Full (strict)"
+4. In SSL/TLS->Overview select "Full (strict)"
 5. In SSL/TLS->Origin Server you will need to generate an origin Certificate to load as a k8s secret. (default options are fine, but change if you want more sectuirty)
 6. Use PEM format and copy the Origin Certificate to a tls.pem file.
 7. Copy the Private key to tls.key file.
@@ -150,13 +150,13 @@ Add Cloudflare Cert for your subdomain rancher.<your_domain>.com
 
 `kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=combined.crt --key=tls.key`
 
-You will also need to add an ingress class to rancher or it will not work properly. Thanks to wrkode on github for this [fix](https://github.com/rancher/rancher/issues/37193#issuecomment-1114014095)
+You will also need to add an ingress class to rancher, or it will not work properly. Thanks to wrkode on github for this [fix](https://github.com/rancher/rancher/issues/37193#issuecomment-1114014095)
 
 `kubectl edit ing -n cattle-system rancher`
 
 add the following in annotations
 ```yaml
-metedata:
+metadata:
     annotations:
         #exsiting annotations
         kubernetes.io/ingress.class: nginx
