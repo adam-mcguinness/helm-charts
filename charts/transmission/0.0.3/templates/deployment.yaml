@@ -15,12 +15,13 @@ spec:
       initContainers:
         - name: init-nfs
           image: busybox
-          command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/wg0.conf' ]
+          command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/init' ]
           volumeMounts:
             - name: {{ .Values.volumes.name }}
               mountPath: "/data"
       containers:
       {{- range $key, $container := .Values.containers }}
+      {{- if or (ne $container.name "gluetun") (and (eq $container.name "gluetun") $container.enabled) }}
       - name: {{ $container.name }}
         image: {{ $container.image }}:{{ $container.tag }}
         ports:
@@ -45,11 +46,10 @@ spec:
       {{- end }}
       {{- if $container.securityContext }}
         securityContext:
-          capabilities:
-            add: {{ $container.securityContext.capabilities.add | toYaml | nindent 12 }}
+{{ toYaml $container.securityContext | indent 10 }}
+        {{- end }}
       {{- end }}
-    {{- end }}
-
+      {{- end }}
       volumes:
         - name: {{ .Values.volumes.name }}
           nfs:

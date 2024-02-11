@@ -67,3 +67,10 @@ questions:
     type: "string"
     default: "transmission-tls"
     group: "Ingress Settings"
+
+  - variable: volumes.name
+    description: "The name of the volume"
+    label: "Volume Name"
+    type: "string"
+    default: "data"
+    group: "VPN Settings"

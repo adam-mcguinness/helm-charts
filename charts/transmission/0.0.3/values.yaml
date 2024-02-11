@@ -21,28 +21,26 @@ containers:
     env:
       TRANSMISSION_HOME: /config
       TZ: America/Denver
-      PUID: 911
-      PGID: 911
-
-  wireguard:
-    name: wireguard
-    image: lscr.io/linuxserver/wireguard
-    tag: latest
-    ports: [ 51820 ]
-    env:
-      TRANSMISSION_HOME: /config
-      TZ: America/Denver
       PUID: 1000
       PGID: 1000
-      SERVERPORT: 51820
-      PEERS: 1
-      PEERDNS: auto
+
+  gluetun:
+    name: gluetun
+    enabled: true
+    image: qmcgaw/gluetun
+    tag: latest
+    ports:
+      - 51820
     volumeMounts:
-      - mountPath: /config
+      - mountPath: /gluetun
         subPath: config/transmission
+    env:
+      VPN_SERVICE_PROVIDER: "custom"
+      killSwitch: true
+      excludedNetworks_IPv4: ["192.168.1.0/24", "10.96.0.0/12"]
     securityContext:
       capabilities:
-        add: [ "NET_ADMIN", "SYS_MODULE" ]
+        add: ["NET_ADMIN"]
 
 service:
   name: transmission-service
