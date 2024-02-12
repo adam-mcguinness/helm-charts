@@ -1,0 +1,49 @@
+app:
+  name: jellyfin
+
+deployment:
+  name: jellyfin
+  replicas: 1
+
+containers:
+  transmission:
+    name: jellyfin
+    image: lscr.io/linuxserver/jellyfin
+    tag: latest
+    ports: [8920]
+    volumeMounts:
+      - mountPath: /config
+        subPath: config/jellyfin
+      - mountPath: /data
+        subPath: tv
+      - mountPath: /data
+        subPath: movies
+    env:
+      TZ: America/Denver
+      PUID: 1000
+      PGID: 1000
+
+service:
+  name: jellyfin-service
+  ports:
+    http:
+      port: 443
+      targetPort: 8920
+      protocol: TCP
+
+volumes:
+  name: data
+  nfs:
+    server: 192.168.0.40
+    path: /data
+
+ingress:
+  enabled: true
+  name: jellyfin-ingress
+  annotations:
+    rewriteTarget: /jellyfin/$2
+    useRegex: "true"
+  className: nginx
+  host: grubbr.io
+  path: /jellyfin(/|$)(.*)
+  tlsSecret: jellyfin-tls
