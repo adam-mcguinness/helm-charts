@@ -164,6 +164,22 @@ metadata:
 ```
 
 # Storage
+## Open Media Vault
+nope not able to run in a container
+
+## Turnkey Linux File Server
+Looks like this might work. Spin up a new LXC container using the Turnkey Linux File Server template.
+
+Add a bind mount from the proxmox host to the container for the file share. 
+
+1. Add a ZFS Volume to you Proxmox host
+
+
+2. Add the following to you 100.conf file in /etc/pve/lxc
+   ```
+   mp0: /store,mp=/data
+   ```
+2. 
 ## NFS Server
 
 ## Add PV to the Cluster
