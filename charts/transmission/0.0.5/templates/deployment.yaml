@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      initContainers:
+        - name: init-nfs
+          image: busybox
+          command: [ 'sh', '-c', 'mkdir -p /data/config/{{ .Values.app.name }} && touch /data/config/{{ .Values.app.name }}/init' ]
+          volumeMounts:
+            - name: {{ .Values.volumes.name }}
+              mountPath: "/data"
+      containers:
+      {{- range $key, $container := .Values.containers }}
+      {{- if or (ne $container.name "gluetun") (and (eq $container.name "gluetun") $container.enabled) }}
+      - name: {{ $container.name }}
+        image: {{ $container.image }}:{{ $container.tag }}
+        ports:
+      {{- range $p := $container.ports }}
+          - containerPort: {{ $p }}
+      {{- if eq $p (index $container.ports 0) }}
+            protocol: TCP
+      {{- else }}
+            protocol: UDP
+      {{- end }}
+      {{- end }}
+        volumeMounts:
+      {{- range $vm := $container.volumeMounts }}
+          - name: {{ $.Values.volumes.name }}
+            mountPath: {{ $vm.mountPath }}
+            subPath: {{ $vm.subPath }}
+      {{- end }}
+        env:
+      {{- range $key, $value := $container.env }}
+            {{- if eq $key "PASS" }}
+          - name: PASS
+            valueFrom:
+              secretKeyRef:
+                name: transmission-password
+                key: PASS
+            {{- else }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+            {{- end }}
+      {{- end }}
+      {{- if $container.securityContext }}
+        securityContext:
+{{ toYaml $container.securityContext | indent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      volumes:
+        - name: {{ .Values.volumes.name }}
+          nfs:
+            server: {{ .Values.volumes.nfs.server }}
+            path: {{ .Values.volumes.nfs.path }}

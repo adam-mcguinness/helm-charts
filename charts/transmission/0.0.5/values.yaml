@@ -1,0 +1,72 @@
+app:
+  name: transmission
+
+deployment:
+  name: transmission
+  replicas: 1
+
+containers:
+  transmission:
+    name: transmission
+    image: lscr.io/linuxserver/transmission
+    tag: latest
+    ports: [9091, 51413]
+    volumeMounts:
+      - mountPath: /config
+        subPath: config/transmission
+      - mountPath: /downloads
+        subPath: media
+      - mountPath: /watch
+        subPath: watch
+    env:
+      TRANSMISSION_HOME: /config
+      TRANSMISSION_WEB_HOME: /config/web
+      TZ: America/Denver
+      PUID: 1000
+      PGID: 1000
+      USER: user
+      PASS: pass
+
+
+  gluetun:
+    name: gluetun
+    enabled: true
+    image: qmcgaw/gluetun
+    tag: latest
+    ports:
+      - 51820
+    volumeMounts:
+      - mountPath: /gluetun
+        subPath: config/transmission
+    env:
+      VPN_SERVICE_PROVIDER: "custom"
+      killSwitch: true
+      excludedNetworks_IPv4: ["192.168.0.0/24"]
+    securityContext:
+      capabilities:
+        add: ["NET_ADMIN"]
+
+service:
+  name: transmission-service
+  ports:
+    http:
+      port: 443
+      targetPort: 9091
+      protocol: TCP
+
+volumes:
+  name: data
+  nfs:
+    server: 192.168.0.40
+    path: /data
+
+ingress:
+  enabled: true
+  name: transmission-ingress
+  annotations:
+    rewriteTarget: /transmission/$2
+    useRegex: "true"
+  className: nginx
+  host: grubbr.io
+  path: /transmission(/|$)(.*)
+  tlsSecret: transmission-tls
