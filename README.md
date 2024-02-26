@@ -163,6 +163,16 @@ metedata:
 
 # Storage
 ## NFS Server
+This seems like the easier way, so I will present it first.
+
+### Install NFS Server to a LXC Container
+1. Install the Turnkey Linux File Server
+2. Set the IP address
+3. Create a ZFS pool in Proxmox to hold all your files
+4. open a shell on the proxmox host and go to /etc/pve/lxc
+5. edit the config file for the nfs server and add the following:
+`mp0: /{{name of the zfs pool you made}},mp=/store`
+6. now start the lxc and set up the nfs exports. 
 
 ## Add PV to the Cluster
 This is what will hold all of you media and config for the pods.
