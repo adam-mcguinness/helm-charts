@@ -19,6 +19,9 @@ spec:
           volumeMounts:
             - name: {{ .Values.volumes.name }}
               mountPath: "/data"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       containers:
       {{- range $key, $container := .Values.containers }}
       {{- if or (ne $container.name "gluetun") (and (eq $container.name "gluetun") $container.enabled) }}
