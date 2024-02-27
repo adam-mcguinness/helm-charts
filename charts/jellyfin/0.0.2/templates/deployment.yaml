@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      initContainers:
+        - name: init-nfs
+          image: busybox
+          command: [ 'sh', '-c', 'mkdir -p /data/app/{{ .Values.app.name }} && touch /data/app/{{ .Values.app.name }}/init' ]
+          volumeMounts:
+            - name: {{ .Values.volumes.name }}
+              mountPath: "/data"
+      containers:
+        - name: {{ .Values.container.name }}
+          image: {{ .Values.container.image}}:{{ .Values.container.tag }}
+          imagePullPolicy: {{ .Values.container.imagePullPolicy }}
+          ports:
+            - containerPort: {{index .Values.container.port}}
+          volumeMounts:
+            {{- range $key, $value := .Values.container.volumeMounts }}
+            - name: {{ $.Values.volumes.name }}
+              mountPath: {{ $value.mountPath }}
+              subPath: {{ $value.subPath }}
+            {{- end }}
+          env:
+            {{- range $key, $value := .Values.container.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+      volumes:
+        - name: {{ .Values.volumes.name }}
+          nfs:
+            server: {{ .Values.volumes.nfs.server }}
+            path: {{ .Values.volumes.nfs.path }}
