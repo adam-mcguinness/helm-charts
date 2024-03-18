@@ -1,0 +1,76 @@
+questions:
+  - variable: app.name
+    label: "Application Name"
+    description: "The name of the application"
+    type: "string"
+    default: "transmission"
+    group: "Application Settings"
+
+  - variable: volume.nfs.server
+    label: "NFS ip"
+    description: "The NFS server ip"
+    type: "string"
+    group: "Application Settings"
+
+  - variable: container.env.TRANSMISSION_HOME
+    label: "Transmission Home"
+    description: "Set home directory for Transmission"
+    type: "string"
+    default: "/config"
+    group: "Environment Settings"
+
+  - variable: container.env.TZ
+    label: "Timezone"
+    description: "Set your time zone"
+    type: "string"
+    default: "America/Denver"
+    group: "Environment Settings"
+
+  - variable: container.env.PUID
+    label: "UID"
+    description: "Set the UID for the container user"
+    type: "string"
+    default: "1000"
+    group: "Environment Settings"
+
+  - variable: container.env.PGID
+    label: "GID"
+    description: "Set the GID for the container user"
+    type: "string"
+    default: "1000"
+    group: "Environment Settings"
+
+  - variable: container.image.tag
+    description: "The tag for the Docker image"
+    label: "Container Tag"
+    type: "string"
+    default: "latest"
+    group: "Container Settings"
+
+  - variable: service.ports.http.port
+    description: "The external HTTP port for accessing Transmission"
+    label: "HTTP Port"
+    type: "int"
+    default: "443"
+    group: "Service Ports"
+
+  - variable: ingress.host
+    description: "Your domain name for Transmission access via Ingress"
+    label: "Ingress Host"
+    type: "string"
+    default: "grubbr.io"
+    group: "Ingress Settings"
+
+  - variable: ingress.tlsSecret
+    description: "The name of the TLS secret for Ingress"
+    label: "TLS Secret Name"
+    type: "string"
+    default: "transmission-tls"
+    group: "Ingress Settings"
+
+  - variable: volumes.name
+    description: "The name of the volume"
+    label: "Volume Name"
+    type: "string"
+    default: "data"
+    group: "VPN Settings"
