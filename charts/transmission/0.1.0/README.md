@@ -1,1 +1,1 @@
-This is mostly a test of the new feature. 
+On to a the first stable version. Using ProtonVPN moving over from mullvad with port forwarding enabled. 
